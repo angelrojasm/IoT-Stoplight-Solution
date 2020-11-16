@@ -1,0 +1,22 @@
+{
+	"name": "iot-stoplight-solution",
+	"version": "1.0.0",
+	"main": "index.js",
+	"author": "angelrojasm <angelrojasm6@gmail.com>",
+	"license": "MIT",
+	"private": "true",
+	"workspaces": [
+		"packages/*"
+	],
+	"devDependencies": {
+		"concurrently": "^5.2.0"
+	},
+	"scripts": {
+		"dev:client": "concurrently \"yarn workspace @iot-stoplight-solution/stoplight start\" \"yarn workspace @iot-stoplight-solution/dashboard start\" \"yarn workspace @iot-stoplight-solution/mobile start\"",
+		"build:client": "yarn workspace @iot-stoplight-solution/client build",
+		"dev:server": "yarn workspace @iot-stoplight-solution/server dev",
+		"start:server": "yarn workspace @iot-stoplight-solution/server start",
+		"dev": "concurrently \"yarn dev:server\" \"yarn dev:client\"",
+		"start": "yarn build:client && yarn start:server"
+	}
+}
