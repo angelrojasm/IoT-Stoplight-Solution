@@ -1,6 +1,6 @@
-# MERN-Project-Boilerplate
+# IoT-Stoplight-Solution
 
-Sample MERN stack project boiler plate with a cloud based mongoose connection using MongoDB Atlas
+Sample IoT simulation solution for managing traffic light states and waiting time for pedestrians. Utilizes AWS IoT Core for MQTT messaging between components
 
 ## Getting Started
 
@@ -12,7 +12,7 @@ in order to install all of the corresponding packages.
 
 After installing the packages, head on the `packages/server` folder and rename the file called `.env.example` to `.env`.
 
-Afterwards, replace the string in the `dbUrl` variable to the connection string used in your mongodb database.
+Afterwards, fill in the `accessKeyID`, `secretKey`, and `region` variables with your own AWS user keys.
 
 ## Running the App
 
