@@ -2,19 +2,15 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 
 function App() {
-	const [message, setMessage] = useState(null);
+    function sendApiRequest() {
+        console.log('hello world');
+    }
 
-	async function getHelloMessage() {
-		let message = await fetch('/hello');
-		let result = await message.text();
-		setMessage(result);
-	}
-
-	useEffect(() => {
-		getHelloMessage();
-	}, []);
-
-	return <>{message === null ? 'Loading...' : message}</>;
+    return (
+        <div style={{ height: '100%' }}>
+            <button onClick={sendApiRequest}>Quiero Cruzar</button>
+        </div>
+    );
 }
 
 export default App;
