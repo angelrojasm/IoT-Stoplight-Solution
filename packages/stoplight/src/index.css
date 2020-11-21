@@ -1,0 +1,61 @@
+html,
+body,
+#root {
+    height: 100%;
+    width: 100%;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+body {
+    margin: auto !important;
+}
+
+.stoplight-container {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.stoplight {
+    height: 400px;
+    width: 180px;
+    background: #333;
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 0.3rem;
+}
+
+.red-light,
+.green-light,
+.yellow-light {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.light {
+    height: 100px;
+    width: 100px;
+    border-radius: 100%;
+    opacity: 0.2;
+}
+
+.red-light > .light {
+    background: red;
+}
+
+.yellow-light > .light {
+    background: yellow;
+}
+
+.green-light > .light {
+    background: green;
+}
+
+.light.active {
+    opacity: 1;
+}
