@@ -1,0 +1,7 @@
+tr th {
+    font-weight: normal;
+}
+
+tr th:nth-of-type(1) {
+    text-transform: capitalize;
+}
