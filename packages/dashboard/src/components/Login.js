@@ -1,13 +1,21 @@
 import React from 'react';
 import useForm from '../hooks/useForm';
 
-const Login = () => {
+const Login = ({ setUser }) => {
     const initialData = { email: '', password: '' };
     const [formData, setFormData, resetForm] = useForm(initialData);
 
     function handleSubmit(e) {
         e.preventDefault();
         resetForm();
+
+        // TODO login request
+        const success = true;
+        const id = '123456123456';
+        if (success) {
+            window.localStorage.setItem('userId', id);
+            setUser(id);
+        }
     }
 
     return (

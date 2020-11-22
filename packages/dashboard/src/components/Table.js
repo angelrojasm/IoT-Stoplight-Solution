@@ -4,12 +4,14 @@ const Table = ({ data }) => {
     return (
         <table>
             <thead>
-                <th>Nombre</th>
-                <th>Valor</th>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Valor</th>
+                </tr>
             </thead>
             {Object.keys(data).map((item, i) => {
                 return (
-                    <tr>
+                    <tr key={i}>
                         <th>{item}</th>
                         <th>{data[item]}</th>
                     </tr>
