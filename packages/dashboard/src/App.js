@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Table from './components/Table';
+import Login from './components/Login';
 import './App.css';
 import './index.css';
 
@@ -17,8 +18,9 @@ function App() {
 
     return (
         <>
-            <h1>Dashboard de {user.name}</h1>
-            <Table data={tableData} />
+            {/* <h1>Dashboard de {user.name}</h1>
+            <Table data={tableData} /> */}
+            <Login />
         </>
     );
 }
