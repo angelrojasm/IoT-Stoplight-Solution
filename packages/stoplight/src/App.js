@@ -94,7 +94,7 @@ function App() {
                 );
             }
         });
-    }, []);
+    }, [timeLeft]);
 
     return (
         <div style={{ height: '100%' }}>
