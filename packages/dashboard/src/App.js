@@ -3,23 +3,23 @@ import Table from './components/Table';
 import Login from './components/Login';
 import './App.css';
 import './index.css';
-import AWS from 'aws-sdk/global'
-import AWSMqttClient from 'aws-mqtt'
-AWS.config.region = 'us-east-1' // your region
+import AWS from 'aws-sdk/global';
+import AWSMqttClient from 'aws-mqtt';
+AWS.config.region = 'us-east-1'; // your region
 AWS.config.credentials = AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-    IdentityPoolId: process.env.REACT_APP_IDENTITY_POOL_ID
-  }) // See AWS Setup and Security below 
+    IdentityPoolId: process.env.REACT_APP_IDENTITY_POOL_ID,
+}); // See AWS Setup and Security below
 
 const data = {
-    cruces: 10,
-    'hora mas cruzada': '6:00 pm',
+    // cruces: 10,
+    // 'hora mas cruzada': '6:00 pm',
 };
 function App() {
     const [user, setUser] = useState(null);
     const [tableData, setTableData] = useState(data);
 
     async function handleUserLogin(user) {
-        setUser({...user});
+        setUser({ ...user });
     }
 
     useEffect(() => {
@@ -34,43 +34,57 @@ function App() {
                 topic: 'WillMsg',
                 payload: 'Connection Closed abnormally..!',
                 qos: 0,
-                retain: false
-            } 
-            })
-    
-            client.on('connect', () => {
-                console.log('connection succesful')
-                client.subscribe('Dashboard', function(err) {
-                    if(!err) {
-                       console.log('subscription to dashboard succesful')
-                    }
-                })
-                client.subscribe('Mobile', function(err) {
-                    if(!err) {
-                       console.log('subscription to Mobile succesful')
-                    }
-                })
-            })
-            client.on('message', (topic, message) => {
-                if(topic === 'Dashboard') {
-    
-                    //Logica de Agregar info a la tabla
-    
-     
-                    //Logica de envio del conteo del tiempo al movil
-                    client.publish('Mobile',JSON.stringify(
-                        {
-                            time: JSON.parse(message.toString()).time, 
-                        }))
+                retain: false,
+            },
+        });
+
+        client.on('connect', () => {
+            console.log('connection succesful');
+            client.subscribe('Dashboard', function (err) {
+                if (!err) {
+                    console.log('subscription to dashboard succesful');
                 }
-    
-           
-            })
+            });
+            client.subscribe('Mobile', function (err) {
+                if (!err) {
+                    console.log('subscription to Mobile succesful');
+                }
+            });
+        });
+        client.on('message', (topic, message) => {
+            if (topic === 'Dashboard') {
+                //Logica de Agregar info a la tabla
+
+                //Logica de envio del conteo del tiempo al movil
+                client.publish(
+                    'Mobile',
+                    JSON.stringify({
+                        time: JSON.parse(message.toString()).time,
+                    })
+                );
+            }
+        });
         const user = window.localStorage.getItem('user');
         if (!!user) {
-            setUser({...JSON.parse(user).user});
+            setUser({ ...JSON.parse(user).user });
         }
     }, []);
+
+    useEffect(() => {
+        async function getTableData() {
+            const req = await fetch(`/get-data`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: user._id }),
+            });
+
+            const data = await req.json();
+            setTableData(data);
+        }
+        if (user) {
+            getTableData();
+        }
+    }, [user]);
 
     return (
         <>

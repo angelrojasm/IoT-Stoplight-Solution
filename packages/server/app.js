@@ -25,7 +25,8 @@ app.post('/login', async function (req, res) {
 });
 
 app.post('/get-data', async function (req, res) {
-	res.send(await (await data.find({userId: req.body.id})).length);
+	const cruces = await data.find({userId: req.body.id})
+	res.send({"Numero de cruces": cruces.length || 0});
 });
 
 module.exports = app;
