@@ -5,22 +5,27 @@ const Login = ({ setUser }) => {
     const initialData = { email: '', password: '' };
     const [formData, setFormData, resetForm] = useForm(initialData);
 
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
         e.preventDefault();
         resetForm();
 
-        // TODO login request
-        const success = true;
-        const id = '123456123456';
-        if (success) {
-            window.localStorage.setItem('userId', id);
-            setUser(id);
+        const req = await fetch(`/login`, {method: 'POST', headers: {
+            'Content-Type': 'application/json'
+        }, body: JSON.stringify(formData)})
+        const user = await req.json();
+        
+        if (req.status === 200) {
+            window.localStorage.setItem('user', JSON.stringify({user}));
+            setUser(user);
+        } else {
+            resetForm();
+            alert("invalid user")
         }
     }
 
     return (
         <div>
-            <h1>Login app de cruces jaja xd</h1>
+            <h1>Login app de cruces 💈</h1>
             <form autoComplete="off" onSubmit={handleSubmit}>
                 <input
                     placeholder="Email"

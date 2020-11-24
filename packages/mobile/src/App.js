@@ -53,11 +53,10 @@ function App() {
             console.log(`Message Received is ${message.toString()}.`)
         }
         })
-        const userId = window.localStorage.getItem('userId');
-        if (!!userId) {
-            setUser({ id: userId, name: 'Bob' });
+        const user = window.localStorage.getItem('user');
+        if (!!user) {
+            setUser({...JSON.parse(user).user});
         }
-        setClient(client)
     }, []);
     
   

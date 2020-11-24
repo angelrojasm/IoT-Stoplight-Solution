@@ -18,8 +18,8 @@ function App() {
     const [user, setUser] = useState(null);
     const [tableData, setTableData] = useState(data);
 
-    function handleUserLogin(id) {
-        setUser({ id, name: 'bob' });
+    async function handleUserLogin(user) {
+        setUser({...user});
     }
 
     useEffect(() => {
@@ -66,9 +66,9 @@ function App() {
     
            
             })
-        const userId = window.localStorage.getItem('userId');
-        if (!!userId) {
-            setUser({ id: userId, name: 'Bob' });
+        const user = window.localStorage.getItem('user');
+        if (!!user) {
+            setUser({...JSON.parse(user).user});
         }
     }, []);
 

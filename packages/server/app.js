@@ -15,13 +15,13 @@ app.listen(process.env.PORT || port, () => {
 	console.log('app is running on port ' + port);
 });
 
-app.post('/register', function (req, res) {
+app.post('/register', async function (req, res) {
 	res.send(await data.create({semaphoreName: req.body.name, userId: req.body.id}));
 });
 
 app.post('/login', async function (req, res) {
-	let loggedUser = await user.find({email: req.body.email, password: req.body.password})
-	res.send({name: loggedUser.name, email: loggedUser.email})
+	let loggedUser = await user.findOne({email: req.body.email, password: req.body.password})
+	res.send({_id: loggedUser._id, name: loggedUser.name, email: loggedUser.email})
 });
 
 app.post('/get-data', async function (req, res) {

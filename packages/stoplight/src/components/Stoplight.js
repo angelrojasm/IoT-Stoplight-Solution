@@ -1,4 +1,4 @@
-import React, { useActive, useEffect, useState } from 'react';
+import React, {  useEffect, useState } from 'react';
 
 const lights = ['red', 'green', 'yellow'];
 const Stoplight = () => {
