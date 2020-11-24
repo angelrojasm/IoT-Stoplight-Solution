@@ -1,27 +1,63 @@
-import React, {  useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+
+const RED = 0;
+const GREEN = 1;
+const YELLOW = 2;
+
+const RED_TIME = 10000;
+const YELLOW_TIME = 3000;
+const GREEN_TIME = 5000;
 
 const lights = ['red', 'green', 'yellow'];
-const Stoplight = () => {
-    const [active, setActive] = useState(0);
+
+const Stoplight = ({ setColor, setTimeLeft }) => {
+    const [active, setActive] = useState(RED);
+    const [timeUntilGreen, setTimeUntilGreen] = useState(RED_TIME);
+
+    const RED_INTERVAL = useRef();
+    const YELLOW_INTERVAL = useRef();
+
     useEffect(() => {
-        /* setInterval(() => {
-            setActive((prev) => (prev + 1) % 3);
-        }, 1000); */
-        if(active === 0) {
-            setTimeout(()=>{
-                setActive(1)
-            },10000)
+        setTimeLeft(RED_TIME);
+    }, []);
+
+    useEffect(() => {
+        if (active === RED) {
+            clearInterval(YELLOW_INTERVAL.current);
+            setColor(RED);
+            RED_INTERVAL.current = setInterval(() => {
+                setTimeUntilGreen((prev) => Math.max(prev - 1000, 0));
+                setTimeLeft((prev) => Math.max(prev - 1000, 0));
+            }, 1000);
+            setTimeout(() => {
+                setActive(GREEN);
+            }, RED_TIME);
         }
-        if(active === 1) {
-            setTimeout(()=>{
-                setActive(2)
-            },7000)
+        if (active === GREEN) {
+            clearInterval(RED_INTERVAL.current);
+            clearInterval(YELLOW_INTERVAL.current);
+            setTimeLeft(0);
+            setColor(GREEN);
+
+            setTimeUntilGreen(0);
+            setTimeout(() => {
+                setActive(YELLOW);
+            }, GREEN_TIME);
         }
-        if(active === 2) {
-            setTimeout(()=>{
-                setActive(0)
-            },3000)
-        } 
+        if (active === YELLOW) {
+            setTimeUntilGreen(RED_TIME + YELLOW_TIME);
+            clearInterval(RED_INTERVAL.current);
+            setTimeLeft(0);
+            setColor(YELLOW);
+
+            YELLOW_INTERVAL.current = setInterval(() => {
+                setTimeUntilGreen((prev) => Math.max(prev - 1000, 0));
+                setTimeLeft((prev) => Math.max(prev - 1000, 0));
+            }, 1000);
+            setTimeout(() => {
+                setActive(RED);
+            }, YELLOW_TIME);
+        }
     }, [active]);
 
     return (

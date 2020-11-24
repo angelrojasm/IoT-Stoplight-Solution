@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Stoplight from './components/Stoplight';
 import './index.css';
 import './App.css';
@@ -35,43 +35,43 @@ function calcTime(distance) {
     }
 }
 
+const client = new AWSMqttClient({
+    region: AWS.config.region,
+    credentials: AWS.config.credentials,
+    endpoint: process.env.REACT_APP_ENDPOINT, // NOTE: get this value with `aws iot describe-endpoint`
+    expires: 600, // Sign url with expiration of 600 seconds
+    clientId: 'Stoplight-App', // clientId to register with MQTT broker. Need to be unique per client
+    will: {
+        topic: 'WillMsg',
+        payload: 'Connection Closed abnormally..!',
+        qos: 0,
+        retain: false,
+    },
+});
+
+client.on('connect', () => {
+    client.subscribe('Semaphore', function (err) {
+        if (!err) {
+            console.log('subscription to Sempahore succesful');
+        }
+    });
+    client.subscribe('Dashboard', function (err) {
+        if (!err) {
+            console.log('subscription to Dashboard succesful');
+        }
+    });
+});
+
 function App() {
-    const [state, setState] = useState('red');
+    const [timeLeft, setTimeLeft] = useState(0);
+    const [color, setColor] = useState(null);
 
     useEffect(() => {
-        const client = new AWSMqttClient({
-            region: AWS.config.region,
-            credentials: AWS.config.credentials,
-            endpoint: process.env.REACT_APP_ENDPOINT, // NOTE: get this value with `aws iot describe-endpoint`
-            expires: 600, // Sign url with expiration of 600 seconds
-            clientId: 'Stoplight-App', // clientId to register with MQTT broker. Need to be unique per client
-            will: {
-                topic: 'WillMsg',
-                payload: 'Connection Closed abnormally..!',
-                qos: 0,
-                retain: false,
-            },
-        });
-
-        client.on('connect', () => {
-            console.log('connection succesful');
-            client.subscribe('Semaphore', function (err) {
-                if (!err) {
-                    console.log('subscription to Sempahore succesful');
-                }
-            });
-            client.subscribe('Dashboard', function (err) {
-                if (!err) {
-                    console.log('subscription to Dashboard succesful');
-                }
-            });
-        });
+        // Este evento se manda muchas veces
         client.on('message', function (topic, message) {
             if (topic === 'Semaphore') {
                 //Logica del semaforo luego de recibir distancia
-
                 let mobileLocation = JSON.parse(message.toString());
-                console.log(mobileLocation);
                 //Calcular Distancia y tiempo a alterar al semaforo
                 let time = calcTime(
                     calcDist(
@@ -82,7 +82,7 @@ function App() {
                     )
                 );
 
-                client.publish('Mobile', JSON.stringify({ time: 10 }));
+                client.publish('Mobile', JSON.stringify({ time: timeLeft / 1000 }));
 
                 //Logica de envio del conteo de informacion al dashboard y de cambio de semaforo
                 client.publish(
@@ -98,7 +98,7 @@ function App() {
 
     return (
         <div style={{ height: '100%' }}>
-            <Stoplight />
+            <Stoplight setTimeLeft={setTimeLeft} setColor={setColor} />
         </div>
     );
 }

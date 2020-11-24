@@ -55,6 +55,7 @@ function App() {
                 // setCountdown(JSON.parse(message.toString()).time);
                 // console.log(`Message Received is ${message.toString()}.`);
                 const { time } = JSON.parse(message.toString());
+                console.log(time);
                 if (time) {
                     setCountdown(time);
                 }
