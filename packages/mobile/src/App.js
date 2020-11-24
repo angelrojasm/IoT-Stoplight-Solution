@@ -12,6 +12,7 @@ AWS.config.credentials = AWS.config.credentials = new AWS.CognitoIdentityCredent
 
 function App() {
     const [user, setUser] = useState(null);
+    const [countdown, setCountdown] = useState(0)
     const [client,setClient] = useState();
     function handleUserLogin(id) {
         setUser({ id, name: 'bob' });
@@ -48,6 +49,7 @@ function App() {
         client.on('message', (topic, message) => {
         if(topic === 'Mobile') {
             //Begin Countdown and vibration for stoplight timer
+            setCountdown(JSON.parse(message.toString()).time)
             console.log(`Message Received is ${message.toString()}.`)
         }
         })
@@ -57,13 +59,17 @@ function App() {
         }
         setClient(client)
     }, []);
-
+    
+  
     function handleButtonPress() {
-        //Codigo de calculo de proximidad con express:
+        //Codigo de calculo de location con express:
+        let coords = navigator.geolocation.getCurrentPosition((position)=> {
+             let x = {latitude: position.coords.latitude, longitude: position.coords.longitude}
 
-
-        //Envio de mensaje con la informacion necesaria al semaforo:
-        client.publish('Semaphore', JSON.stringify({message: "Mobile Distance to Semaphore is X meters"}))
+             //Envio de mensaje con la informacion necesaria al semaforo:
+             client.publish('Semaphore', JSON.stringify(x))
+        })
+       
     }
 
     return (
@@ -73,6 +79,7 @@ function App() {
             ) : (
                 <div>
                     <button onClick={handleButtonPress}>Quiero cruzar</button>
+                    {countdown < 10 && countdown > 0 && <h2 id="countdown">{countdown}</h2> }
                 </div>
             )}
         </>

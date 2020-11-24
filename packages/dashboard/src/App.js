@@ -54,14 +54,13 @@ function App() {
             client.on('message', (topic, message) => {
                 if(topic === 'Dashboard') {
     
-                    console.log(`Message Received is ${message.toString()}.`)
                     //Logica de Agregar info a la tabla
     
      
                     //Logica de envio del conteo del tiempo al movil
                     client.publish('Mobile',JSON.stringify(
                         {
-                            time: 'Remaining time until Green Light is: X seconds', 
+                            time: JSON.parse(message.toString()).time, 
                         }))
                 }
     

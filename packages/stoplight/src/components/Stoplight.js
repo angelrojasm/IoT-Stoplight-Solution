@@ -1,13 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import React, { useActive, useEffect, useState } from 'react';
 
 const lights = ['red', 'green', 'yellow'];
 const Stoplight = () => {
     const [active, setActive] = useState(0);
     useEffect(() => {
-        setInterval(() => {
+        /* setInterval(() => {
             setActive((prev) => (prev + 1) % 3);
-        }, 1000);
-    }, []);
+        }, 1000); */
+        if(active === 0) {
+            setTimeout(()=>{
+                setActive(1)
+            },10000)
+        }
+        if(active === 1) {
+            setTimeout(()=>{
+                setActive(2)
+            },7000)
+        }
+        if(active === 2) {
+            setTimeout(()=>{
+                setActive(0)
+            },3000)
+        } 
+    }, [active]);
 
     return (
         <div className="stoplight-container">

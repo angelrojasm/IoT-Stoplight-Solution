@@ -9,8 +9,39 @@ AWS.config.credentials = AWS.config.credentials = new AWS.CognitoIdentityCredent
     IdentityPoolId: process.env.REACT_APP_IDENTITY_POOL_ID
   }) // See AWS Setup and Security below 
 
+  function calcDist(lat1, lon1, lat2, lon2){
+    const R = 6371e3; // metres
+    const φ1 = lat1 * Math.PI/180; // φ, λ in radians
+    const φ2 = lat2 * Math.PI/180;
+    const Δφ = (lat2-lat1) * Math.PI/180;
+    const Δλ = (lon2-lon1) * Math.PI/180;
+
+    const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+            Math.cos(φ1) * Math.cos(φ2) *
+            Math.sin(Δλ/2) * Math.sin(Δλ/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+    const d = R * c; // in metres
+
+    return d;
+}
+function calcTime(distance) {
+    
+    if(distance <= 10) {
+        return 15;
+    }
+    else if(distance <= 30) {
+        return 10
+    } 
+    else
+    if(distance <= 50) {
+        return 5
+    }
+}
+
+
 function App() {
-    // const [message, setMessage] = useState(null);
+     const [state, setState] = useState('red');
 
     // async function getHelloMessage() {
     // 	let message = await fetch('/hello');
@@ -19,7 +50,8 @@ function App() {
     // }
 
     useEffect(() => {
-        // TODO: fetch the data          
+        // TODO: fetch the data      
+        
         const client = new AWSMqttClient({
         region: AWS.config.region,
         credentials: AWS.config.credentials,
@@ -50,15 +82,18 @@ function App() {
         client.on('message', (topic, message) => {
             if(topic === 'Semaphore') {
 
-                console.log(`Message Received is ${message.toString()}.`)
                 //Logica del semaforo luego de recibir distancia
-
-
-                //Logica de envio del conteo de informacion al dashboard
+           
+                let mobileLocation = JSON.parse(message.toString())
+                console.log(mobileLocation)
+                //Calcular Distancia y tiempo a alterar al semaforo
+                let time = calcTime(calcDist(mobileLocation.latitude,mobileLocation.longitude,18.473232, -69.919237))
+                
+                //Logica de envio del conteo de informacion al dashboard y de cambio de semaforo
                 client.publish('Dashboard',JSON.stringify(
                     {
-                        time: 'Remaining time until Green Light is: X seconds', 
-                        distance: 'Crosswalk distance is: X meters',
+                        time: time, 
+                        distance: 1,
                     }))
             }
 
@@ -66,7 +101,7 @@ function App() {
         })
 
     }, []);
-
+ 
     return (
         <div style={{ height: '100%' }}>
             <Stoplight />
