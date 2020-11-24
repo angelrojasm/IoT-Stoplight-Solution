@@ -47,7 +47,7 @@ const Stoplight = ({ setColor, setTimeLeft }) => {
         if (active === YELLOW) {
             setTimeUntilGreen(RED_TIME + YELLOW_TIME);
             clearInterval(RED_INTERVAL.current);
-            setTimeLeft(0);
+            setTimeLeft(RED_TIME + YELLOW_TIME);
             setColor(YELLOW);
 
             YELLOW_INTERVAL.current = setInterval(() => {

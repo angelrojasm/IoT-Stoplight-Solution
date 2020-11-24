@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Stoplight from './components/Stoplight';
 import './index.css';
 import './App.css';
@@ -65,6 +65,7 @@ client.on('connect', () => {
 function App() {
     const [timeLeft, setTimeLeft] = useState(0);
     const [color, setColor] = useState(null);
+    const timeL = useRef(0);
 
     useEffect(() => {
         // Este evento se manda muchas veces
@@ -82,7 +83,8 @@ function App() {
                     )
                 );
 
-                client.publish('Mobile', JSON.stringify({ time: timeLeft / 1000 }));
+                console.log(timeL.current)
+                client.publish('Mobile', JSON.stringify({ time: timeL.current / 1000 }));
 
                 //Logica de envio del conteo de informacion al dashboard y de cambio de semaforo
                 client.publish(
@@ -94,7 +96,11 @@ function App() {
                 );
             }
         });
-    }, [timeLeft]);
+    }, []);
+
+    useEffect(()=>{
+        timeL.current = timeLeft;
+    }, [timeLeft])
 
     return (
         <div style={{ height: '100%' }}>
